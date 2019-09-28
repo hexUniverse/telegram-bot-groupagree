@@ -1,0 +1,23 @@
+version: "2"
+
+services:
+    db:
+        image: mysql:5.7
+        restart: unless-stopped
+        volumes:
+            - ./bot/groupagreebot_database_05_05_2019.sql:/docker-entrypoint-initdb.d/init.sql
+            - ./mysql-data:/var/lib/mysql/
+        environment:
+            MYSQL_USER: gab
+            MYSQL_PASSWORD: gab
+            MYSQL_DATABASE: groupagreebot_beta
+            MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+
+    groupagree:
+        build: ./bot
+        stop_grace_period: 1s
+        restart: unless-stopped
+        depends_on:
+            - db
+        environment:
+            GROUPAGREE_DB_HOST: db
